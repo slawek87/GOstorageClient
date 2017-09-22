@@ -45,6 +45,18 @@ func (client *Client) DeleteFile(filename string) (map[string]string, error) {
 
 
 // Use this method to delete file from GOstorage service.
-func (client *Client) OverwriteFile(file os.File, filename string) (map[string]string, error) {
+func (client *Client) OverwriteFile(file multipart.File, fileHeader *multipart.FileHeader, filename string) (map[string]string, error) {
+	data, err := client.DeleteFile(filename)
 
+    if err != nil {
+    	return data, err
+	}
+
+    data, err = client.UploadFile(file, fileHeader)
+
+	if err != nil {
+		return data, err
+	}
+
+	return map[string]string{"result": filename + " overwritten."}, nil
 }
