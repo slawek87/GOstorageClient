@@ -17,26 +17,26 @@ func (goRequest *GOrequest) resty() *resty.Request  {
 	return request
 }
 
-func (goRequest *GOrequest) delete(url string, formData map[string]string) (map[string]string, error) {
-	var data map[string]string
-	response, _ := goRequest.resty().SetFormData(formData).SetResult(&data).Delete(goRequest.GetURL(url))
-
+func (GOrequest *GOrequest) handleResponse(data map[string]string, response *resty.Response) (map[string]string, error) {
 	if response.StatusCode() >= 300 {
-		errors.New(response.Status())
+		return data, errors.New(response.Status())
 	}
 
 	return data, nil
 }
 
+func (goRequest *GOrequest) deleteFile(url string, formData map[string]string) (map[string]string, error) {
+	var data map[string]string
+	response, _ := goRequest.resty().SetFormData(formData).SetResult(&data).Delete(goRequest.getURL(url))
+
+	return goRequest.handleResponse(data, response)
+}
+
 func (goRequest *GOrequest) post(url string, formData map[string]string) (map[string]string, error) {
 	var data map[string]string
-	response, _ := goRequest.resty().SetFormData(formData).SetResult(&data).Post(goRequest.GetURL(url))
+	response, _ := goRequest.resty().SetFormData(formData).SetResult(&data).Post(goRequest.getURL(url))
 
-	if response.StatusCode() >= 300 {
-		errors.New(response.Status())
-	}
-
-	return data, nil
+	return goRequest.handleResponse(data, response)
 }
 
 func (goRequest *GOrequest) sendFile(url string, body *map[string]multipart.File) (map[string]string, error) {
@@ -47,14 +47,10 @@ func (goRequest *GOrequest) sendFile(url string, body *map[string]multipart.File
 		SetResult(&data).
 		Post(url)
 
-	if response.StatusCode() >= 300 {
-		errors.New(response.Status())
-	}
-
-	return data, nil
+	return goRequest.handleResponse(data, response)
 }
 
-func (goRequest *GOrequest) GetURL(url string) string {
+func (goRequest *GOrequest) getURL(url string) string {
 	return conf.Settings.GetSettings("PROTOCOL") + "://" +
 		conf.Settings.GetSettings("HOST") + ":" +
 		conf.Settings.GetSettings("PORT") +

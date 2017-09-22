@@ -33,18 +33,18 @@ func (client *Client) UploadFile(file multipart.File, fileHeader *multipart.File
 }
 
 
-// Use this method to delete file from GOstorage service.
+// Use this method to deleteFile file from GOstorage service.
 func (client *Client) DeleteFile(filename string) (map[string]string, error) {
 	const DELETE_FILE_URL = "/api/v1/storage/file/upload"
 	var formData map[string]string
 
 	formData["FileName"] = filename
 
-	return client.request.delete(DELETE_FILE_URL, formData)
+	return client.request.deleteFile(DELETE_FILE_URL, formData)
 }
 
 
-// Use this method to delete file from GOstorage service.
+// Use this method to deleteFile file from GOstorage service.
 func (client *Client) OverwriteFile(file multipart.File, fileHeader *multipart.FileHeader, filename string) (map[string]string, error) {
 	data, err := client.DeleteFile(filename)
 
