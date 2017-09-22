@@ -25,21 +25,21 @@ func (GOrequest *GOrequest) handleResponse(data map[string]string, response *res
 	return data, nil
 }
 
-func (goRequest *GOrequest) deleteFile(url string, formData map[string]string) (map[string]string, error) {
+func (goRequest *GOrequest) Delete(url string, formData map[string]string) (map[string]string, error) {
 	var data map[string]string
 	response, _ := goRequest.resty().SetFormData(formData).SetResult(&data).Delete(goRequest.getURL(url))
 
 	return goRequest.handleResponse(data, response)
 }
 
-func (goRequest *GOrequest) post(url string, formData map[string]string) (map[string]string, error) {
+func (goRequest *GOrequest) Post(url string, formData map[string]string) (map[string]string, error) {
 	var data map[string]string
 	response, _ := goRequest.resty().SetFormData(formData).SetResult(&data).Post(goRequest.getURL(url))
 
 	return goRequest.handleResponse(data, response)
 }
 
-func (goRequest *GOrequest) sendFile(url string, body *map[string]multipart.File) (map[string]string, error) {
+func (goRequest *GOrequest) UploadFile(url string, body *map[string]multipart.File) (map[string]string, error) {
 	var data map[string]string
 
 	response, _ := goRequest.resty().SetBody(body).
