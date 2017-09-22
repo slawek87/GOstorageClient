@@ -2,59 +2,49 @@ package client
 
 import (
 	"os"
-	"reflect"
-	"github.com/slawek87/GOstorageClient/conf"
-	"gopkg.in/resty.v0"
+	"mime/multipart"
 )
 
 type ClientInterface interface {
-	UploadFile(file os.File) error
-	DeleteFile(filename string) error
-	OverwriteFile(file os.File, filename string) error
+	UploadFile(file os.File) (map[string]string, error)
+	DeleteFile(filename string) map[string]string
+	OverwriteFile(file os.File, filename string) (map[string]string, error)
 }
-
-type GOrequest struct {}
-
-func (goRequest *GOrequest) resty() *resty.Request {
-	request := resty.R()
-	request.SetHeader("Content-Type", "application/json")
-	request.SetBasicAuth(conf.Settings.GetSettings("USERNAME"), conf.Settings.GetSettings("PASSWORD"))
-
-	return request
-}
-
-func (goRequest *GOrequest) mapStructure(data map[string]interface{}, result interface{}) interface{} {
-	elements := reflect.ValueOf(result).Elem()
-
-	for key, value := range data {
-		getValue := elements.FieldByName(key)
-
-		if getValue.IsValid() {
-			getValue.Set(reflect.ValueOf(value))
-		}
-	}
-
-	return result
-}
-
-func (goRequest *GOrequest) post(url string, formData map[string]string, result interface{}) (map[string]interface{}, interface{}) {
-	var data map[string]interface{}
-
-	goRequest.resty().SetFormData(formData).SetResult(&data).Post(goRequest.GetURL(url))
-	goRequest.mapStructure(data, result)
-
-	return data, result
-}
-
-func (goRequest *GOrequest) GetURL(url string) string {
-	return conf.Settings.GetSettings("PROTOCOL") + "://" + conf.Settings.GetSettings("HOST") + ":" + conf.Settings.GetSettings("PORT") + url
-}
-
 
 type Client struct {
 	request GOrequest
 }
 
-func (client *Client) UploadFile(file os.File) error {
+// Use this method to upload file to GOstorage service.
+func (client *Client) UploadFile(file multipart.File, fileHeader *multipart.FileHeader) (map[string]string, error) {
+	const UPLOAD_FILE_URL = "/api/v1/storage/file/upload"
+	var data map[string]string
+	var body map[string]multipart.File
+
+	file, err := fileHeader.Open()
+
+	if err != nil {
+		return data, err
+	}
+
+	body["upload"] = &file
+
+	return client.request.sendFile(UPLOAD_FILE_URL, &body)
+}
+
+
+// Use this method to delete file from GOstorage service.
+func (client *Client) DeleteFile(filename string) (map[string]string, error) {
+	const DELETE_FILE_URL = "/api/v1/storage/file/upload"
+	var formData map[string]string
+
+	formData["FileName"] = filename
+
+	return client.request.delete(DELETE_FILE_URL, formData)
+}
+
+
+// Use this method to delete file from GOstorage service.
+func (client *Client) OverwriteFile(file os.File, filename string) (map[string]string, error) {
 
 }
