@@ -1,10 +1,7 @@
 package main
 
-import (
-	"github.com/slawek87/GOstorageClient/conf"
-	"fmt"
-)
+import "github.com/slawek87/GOstorageClient/example"
 
 func main() {
-    fmt.Println(conf.Settings.GetSettings("HOST"))
+    example.Example()
 }
