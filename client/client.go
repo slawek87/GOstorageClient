@@ -23,9 +23,9 @@ func (client Client) UploadFile(file *os.File) (map[string]string, error) {
 
 // Use this method to Delete file from GOstorage service.
 func (client Client) DeleteFile(filename string) (map[string]string, error) {
-	const DELETE_FILE_URL = "/api/v1/storage/file/upload"
+	const DELETE_FILE_URL = "/api/v1/storage/file/delete"
 
-	return client.Request.Delete(DELETE_FILE_URL, map[string]string{"FileName": filename})
+	return client.Request.Delete(DELETE_FILE_URL, filename)
 }
 
 // Use this method to Delete file from GOstorage service.

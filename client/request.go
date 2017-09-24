@@ -8,7 +8,6 @@ import (
 	"bytes"
 	"mime/multipart"
 	"os"
-	"fmt"
 	"strings"
 )
 
@@ -29,18 +28,8 @@ func (GOrequest *GOrequest) handleResponse(data map[string]string, response *res
 	return data, nil
 }
 
-func (goRequest *GOrequest) Delete(url string, formData map[string]string) (map[string]string, error) {
-	var data map[string]string
-
-	url = goRequest.GetURL(url)
-
-	response, _ := goRequest.resty().
-		SetHeader("Content-Type", "application/json").
-		SetFormData(formData).
-		SetResult(&data).
-		Delete(url)
-
-	return goRequest.handleResponse(data, response)
+func (goRequest *GOrequest) Delete(url string, filename string) (map[string]string, error) {
+	return goRequest.Post(url, map[string]string{"FileName": filename})
 }
 
 func (goRequest *GOrequest) Post(url string, formData map[string]string) (map[string]string, error) {
@@ -49,7 +38,6 @@ func (goRequest *GOrequest) Post(url string, formData map[string]string) (map[st
 	url = goRequest.GetURL(url)
 
 	response, _ := goRequest.resty().
-		SetHeader("Content-Type", "application/json").
 		SetFormData(formData).
 		SetResult(&data).
 		Post(url)
@@ -72,8 +60,6 @@ func (goRequest *GOrequest) UploadFile(url string, file *os.File) (map[string]st
 		tmp := strings.Split(filename, "/")
 		filename = tmp[len(tmp)-1]
 	}
-
-	fmt.Println(file.Name())
 
 	formFile, _ := writeBody.CreateFormFile("upload", filename)
 	io.Copy(formFile, file)
