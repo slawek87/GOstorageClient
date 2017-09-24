@@ -18,7 +18,7 @@ type Client struct {
 func (client Client) UploadFile(file *os.File) (map[string]string, error) {
 	const UPLOAD_FILE_URL = "/api/v1/storage/file/upload"
 
-	return client.Request.UploadFile(UPLOAD_FILE_URL, map[string]*os.File{"upload": file})
+	return client.Request.UploadFile(UPLOAD_FILE_URL, file)
 }
 
 

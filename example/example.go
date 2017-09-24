@@ -4,16 +4,15 @@ package example
 import (
 	"github.com/slawek87/GOstorageClient/client"
 	"os"
-	"fmt"
 )
 
 func Example() {
 	storageClient := client.ClientInterface(client.Client{})
-	getFile, err := os.Open("./example/data/mazda.pdf")
 
-	if err != nil {
-		fmt.Println(err)
-	}
+	path := "./example/data/mazda.pdf"
 
-	storageClient.UploadFile(getFile)
+	file, _ := os.Open(path)
+
+    storageClient.UploadFile(file)
+
 }
