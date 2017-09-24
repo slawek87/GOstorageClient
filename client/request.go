@@ -14,7 +14,7 @@ import (
 
 type GOrequest struct{}
 
-func (goRequest *GOrequest) resty() *resty.Request  {
+func (goRequest *GOrequest) resty() *resty.Request {
 	request := resty.R()
 	request.SetBasicAuth(conf.Settings.GetSettings("USERNAME"), conf.Settings.GetSettings("PASSWORD"))
 
@@ -35,10 +35,10 @@ func (goRequest *GOrequest) Delete(url string, formData map[string]string) (map[
 	url = goRequest.GetURL(url)
 
 	response, _ := goRequest.resty().
-							 SetHeader("Content-Type", "application/json").
-							 SetFormData(formData).
-							 SetResult(&data).
-							 Delete(url)
+		SetHeader("Content-Type", "application/json").
+		SetFormData(formData).
+		SetResult(&data).
+		Delete(url)
 
 	return goRequest.handleResponse(data, response)
 }
@@ -49,10 +49,10 @@ func (goRequest *GOrequest) Post(url string, formData map[string]string) (map[st
 	url = goRequest.GetURL(url)
 
 	response, _ := goRequest.resty().
-		 				     SetHeader("Content-Type", "application/json").
-		   				     SetFormData(formData).
-		   				     SetResult(&data).
-		   				     Post(url)
+		SetHeader("Content-Type", "application/json").
+		SetFormData(formData).
+		SetResult(&data).
+		Post(url)
 
 	return goRequest.handleResponse(data, response)
 }
@@ -81,8 +81,8 @@ func (goRequest *GOrequest) UploadFile(url string, file *os.File) (map[string]st
 	writeBody.Close()
 
 	response, _ := goRequest.resty().
-		SetHeader("Content-Type",  writeBody.FormDataContentType()).
-	    SetBody(&body).
+		SetHeader("Content-Type", writeBody.FormDataContentType()).
+		SetBody(&body).
 		SetContentLength(true).
 		SetResult(&data).
 		Post(url)
